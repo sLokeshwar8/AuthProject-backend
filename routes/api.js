@@ -1,6 +1,7 @@
 const express = require('express'); //import express 
 const router = express.Router(); 
 const mongoose = require('mongoose');  //import mongoose 
+var ObjectId = require('mongodb').ObjectID
 const User = require('../models/user');
 const Event = require('../models/event');
 const jwt = require('jsonwebtoken');
@@ -149,14 +150,35 @@ router.post('/saveNewEvent',(req,res) => {
 })
 
 router.put('/updateEvent/:id', (req,res,next) =>{
-    Event.findByIdAndUpdate({_id:req.params.id},req.body,{new: true, useFindAndModify: false}).then(function(){
-        Event.findOne({_id:req.params}).then(function(event){
-            res.send(event)
+    const id = req.params.id;
+    console.log(id);
+    Event.findByIdAndUpdate(new ObjectId(id),req.body,{new: true}, (err,doc) => {
+        if(err){
+            console.log(err.message);
+        }
+        Event.findOne(new ObjectId(id),(err,doc)=>{
+            console.log(doc)
         })
+        res.status(200).send(doc)
+
     })
+
 })
 
+router.put('/getEvent/:id', (req, res) =>{
+    const id = req.params.id;
+    console.log(id);
+    Event.findByIdAndUpdate(new ObjectId(id),req.body,{new: true}, (err,doc) => {
+        if(err){
+            console.log(err.message);
+        }
+        Event.findOne(new ObjectId(id),(err,doc)=>{
+            console.log(doc)
+        })
+        res.status(200).send(doc)
 
+    })
+});
 
 module.exports = router;
 
